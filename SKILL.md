@@ -1,9 +1,9 @@
 ---
-name: makemkv-subtitle-ocr
-description: Extract and OCR image-based PGS subtitles from MakeMKV (MKV) backups to text-based SRT format. Includes a workflow for identifying and renaming episodes based on subtitle content. Suitable for Blu-ray and DVD backups.
+name: mkv
+description: Extract and OCR image-based PGS subtitles from MKV files to text-based SRT format. Includes a workflow for identifying and renaming episodes based on subtitle content. Suitable for high-quality video files containing PGS subtitles.
 ---
 
-# MakeMKV Subtitle OCR
+# MKV Subtitle OCR
 
 This skill provides a workflow for extracting and converting image-based PGS (HDMV) subtitles from MKV files to text-based SRT format using OCR (Optical Character Recognition), and identifying episodes for proper renaming.
 
