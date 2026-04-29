@@ -1,5 +1,5 @@
 ---
-name: mkv
+name: mkv-subtitle-ocr
 description: Extract and OCR image-based PGS subtitles from MKV files to text-based SRT format. Includes a workflow for identifying and renaming episodes based on subtitle content. Suitable for high-quality video files containing PGS subtitles.
 ---
 
