@@ -5,6 +5,9 @@ import venv
 import shutil
 import tempfile
 
+# SAFETY MANDATE: This script must NEVER delete any input files or folders.
+# It only generates .srt files.
+
 def run_cmd(cmd, check=True):
     print(f"Running: {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)

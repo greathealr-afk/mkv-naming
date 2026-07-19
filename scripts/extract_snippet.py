@@ -5,6 +5,9 @@ import venv
 import shutil
 import tempfile
 
+# SAFETY MANDATE: This script must NEVER delete any input files or folders.
+# Temporary files are cleaned up via tempfile.TemporaryDirectory only.
+
 def run_cmd(cmd, check=True):
     print(f"Running: {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -20,7 +23,11 @@ def main():
         sys.exit(1)
 
     mkv_file = sys.argv[1]
-    timestamps = sys.argv[2:] if len(sys.argv) > 2 else ["00:10:00"]
+    # Default to three points (triangulation):
+    # 1. 00:00:00 - Detect recaps (The Pilot Trap)
+    # 2. 00:10:00 - Catch main plot/dialogue
+    # 3. 00:20:00 - Catch title cards or second act developments
+    timestamps = sys.argv[2:] if len(sys.argv) > 2 else ["00:00:00", "00:10:00", "00:20:00"]
     duration = "00:02:00"
     
     # Use a persistent venv

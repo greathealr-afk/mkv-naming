@@ -1,11 +1,19 @@
 ---
-name: mkv-subtitle-ocr
-description: Extract and OCR image-based PGS subtitles from MKV files to text-based SRT format. Includes a workflow for identifying and renaming episodes based on subtitle content. Suitable for high-quality video files containing PGS subtitles.
+name: makemkv-subtitle-ocr
+description: Extract and OCR image-based PGS subtitles from MakeMKV (MKV) backups to text-based SRT format. Includes a workflow for identifying and renaming episodes based on subtitle content. Suitable for Blu-ray and DVD backups.
 ---
 
-# MKV Subtitle OCR
+# MakeMKV Subtitle OCR
 
 This skill provides a workflow for extracting and converting image-based PGS (HDMV) subtitles from MKV files to text-based SRT format using OCR (Optical Character Recognition), and identifying episodes for proper renaming.
+
+## Safety Mandates (CRITICAL)
+
+- **NO DELETION:** Never use `rm`, `unlink`, or `shutil.rmtree` on any media files or folders.
+- **Atomic Renaming:** Use `mv` for renaming. Never copy and then delete the source.
+- **NO OVERWRITE:** ALWAYS check if the destination file exists before renaming. Never overwrite an existing file unless it has been explicitly verified as a duplicate or inferior version. In shell, use `mv -n` (no-clobber). In Python, use `os.path.exists()` before `os.rename()`.
+- **Folder Cleanup:** Do NOT attempt to delete "empty" source folders. Leave them for the user to verify and remove manually.
+- **Preserve Source:** If a move operation is complex, prefer keeping the source until the destination is verified.
 
 ## Requirements
 
@@ -51,12 +59,15 @@ python3 scripts/extract_snippet.py "input.mkv" 00:20:00 00:02:00
 
 To avoid false positives (misidentifying an episode because of recaps or common dialogue), use these techniques:
 
-- **Avoid the First 5 Minutes:** Recaps and "Previously on..." sections are common in the first few minutes and often contain dialogue from *previous* episodes.
+- **The Pilot Trap (CRITICAL):** The very first episode of a series (S01E01) **NEVER** starts with a recap. Before identifying a file as the Pilot, **ALWAYS** extract a snippet at `00:00:00`. If it contains "Previously on..." or "Previously...", it is **NOT** the Pilot.
+- **The Triangulation Strategy (Recommended):** To maximize reliability and avoid being misled by recaps or generic dialogue, always check at least three points:
+    1.  **00:00:00**: Check for "Previously on" to avoid the Pilot Trap.
+    2.  **00:10:00**: Identify unique nouns, plot points, and character dynamics.
+    3.  **00:20:00**: Look for title cards or deeper plot details that confirm the specific episode.
 - **Search for Unique Dialogue:** Instead of common character names, search for specific, rare nouns or plot points (e.g., "ZPM", "Wraith hive ship", "Ancient chair").
-- **Multiple Snippets:** If the 10-minute mark doesn't give you enough information, take another snippet from the 25-minute mark.
-- **Sequential Validation:** If you are processing a batch from a single disc (e.g., title_01.mkv to title_05.mkv), the episodes are almost always sequential. If title_01 is S01E01 and title_03 is S01E03, then title_02 is almost certainly S01E02. Flag any "out of order" identifications for manual review.
-- **Duration Check:** Compare the duration with an episode guide. Some tracks are "Extended Versions" or "Director's Cuts" which have different durations.
-- **Opening Title Card:** Most shows display the episode title on screen a few minutes into the episode. Look for text that appears alone on a line shortly after the intro theme.
+- **Check for the Title Card:** Most shows display the episode title on screen between the 2-minute and 8-minute marks. Look for a standalone line of text that doesn't sound like dialogue.
+- **Sequential Validation:** Episodes on a disc are almost always sequential. If `title_01` is E01 and `title_03` is E03, then `title_02` is almost certainly E02. If your identification breaks this sequence, re-check the "Previously on" sections.
+- **Duration Check:** Compare durations with an episode guide. Some tracks might be extras or "Extended Versions".
 
 ### 3. Verify and Rename
 Cross-reference your findings with an online episode guide (e.g., IMDb, Fandom).
@@ -81,17 +92,21 @@ for f in *.mkv; do echo "$f: $(ffprobe -v error -show_entries format=duration -o
 
 ## Media Server Optimization (Jellyfin/Plex)
 
-To ensure your media server correctly identifies and groups your episodes, follow these structural guidelines.
+To ensure your media server correctly identifies and groups your episodes and movies, follow these structural guidelines.
 
 ### 1. Naming Convention
 Rename verified files to the standard format for automatic metadata matching:
-Show Name - SXXEXX - Episode Title.mkv
+- **TV Episodes:** Show Name - SXXEXX - Episode Title.mkv
+- **Movies:** Movie Title (Year).mkv
 
 ### 2. Folder Structure
-Media servers require episodes to be placed in specific subfolders. Move your renamed files into a Season XX folder within the show's root directory.
+Media servers require content to be organized in specific folder structures.
+
+**TV Shows:**
+Move your renamed files into a Season XX folder within the show's root directory.
 
 ```bash
-# Recommended structure
+# Recommended TV structure
 Show Name/
 ├── Season 01/
 │   ├── Show Name - S01E01 - Pilot.mkv
@@ -99,6 +114,15 @@ Show Name/
 └── Season 02/
     ├── Show Name - S02E01 - New Beginnings.mkv
     └── Show Name - S02E01 - New Beginnings.en.srt
+```
+
+**Movies:**
+Each movie should ideally be in its own folder. The folder name **MUST** include the release year in parentheses.
+
+```bash
+# Recommended Movie structure
+Movie Title (Year)/
+└── Movie Title (Year).mkv
 ```
 
 ### 3. External Subtitles
