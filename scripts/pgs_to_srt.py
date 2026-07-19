@@ -25,7 +25,8 @@ def main():
     
     # Use a persistent venv in the user's home directory to avoid issues with 
     # colons (':') in workspace paths, which break Python's venv module.
-    venv_dir = os.path.expanduser("~/.cache/gemini-cli/pgs_to_srt_venv")
+    # We use ~/.makemkv-ocr-venv to be agent and OS agnostic.
+    venv_dir = os.path.expanduser("~/.makemkv-ocr-venv")
     
     pip_bin = os.path.join(venv_dir, "bin", "pip")
     pgsrip_bin = os.path.join(venv_dir, "bin", "pgsrip")

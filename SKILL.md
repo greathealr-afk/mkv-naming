@@ -23,6 +23,10 @@ The following tools must be installed on the system:
 - python3 (with venv module)
 - ffmpeg (for snippet extraction)
 
+**Installation Notes:**
+- **Ubuntu/Debian:** `sudo apt install mkvtoolnix tesseract-ocr ffmpeg python3-venv`
+- **macOS:** `brew install mkvtoolnix tesseract ffmpeg python3`
+
 ## Workflow
 
 ### 1. Identify Subtitle Tracks
@@ -131,5 +135,5 @@ Always keep the generated .srt files alongside the .mkv files with matching base
 ## Troubleshooting
 
 - No languages found: Ensure tesseract-ocr-eng (or other language packs) are installed.
-- Venv issues: Python's venv module refuses to create environments in paths containing a colon (:). The bundled script attempts to use ~/.cache/gemini-cli/pgs_to_srt_venv or /tmp to avoid this.
+- Venv issues: Python's venv module refuses to create environments in paths containing a colon (:). The bundled script attempts to use `~/.makemkv-ocr-venv` or `/tmp` to avoid this.
 - Duplicates: TV discs often contain a "Play All" track which is a large MKV containing all episodes. Verify if one file's duration matches the sum of the others.

@@ -31,7 +31,8 @@ def main():
     duration = "00:02:00"
     
     # Use a persistent venv
-    venv_dir = os.path.expanduser("~/.cache/gemini-cli/pgs_to_srt_venv")
+    # We use ~/.makemkv-ocr-venv to be agent and OS agnostic.
+    venv_dir = os.path.expanduser("~/.makemkv-ocr-venv")
     pip_bin = os.path.join(venv_dir, "bin", "pip")
     pgsrip_bin = os.path.join(venv_dir, "bin", "pgsrip")
 
